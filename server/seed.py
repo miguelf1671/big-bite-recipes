@@ -9,7 +9,7 @@ Faker.seed(seed_value)
 
 
 # Create 10 fake recipes
-def create_recipes():
+def create_recipes(users):
 
     recipes = []
 
@@ -20,8 +20,8 @@ def create_recipes():
             ingredients=fake.paragraph(),
             directions=fake.paragraph(),
             vegetarian=choice([True, False]),
-            who_submitted=fake.name(),
-            who_favorited=fake.name()
+            who_submitted=users[randint(0, len(users)-1)].username,
+            likes=randint(0, len(users)-1)
         ))
 
     
@@ -31,14 +31,11 @@ def create_recipes():
 
 # Creates 5 fake users
 
-
 def create_users():
     users = []
     for _ in range(5):
         users.append(User(
-            username=fake.name(),
-            user_favorites=fake.word(),
-            user_submissions=fake.word(),
+            username=fake.name()
         ))
     return users
 
@@ -71,17 +68,17 @@ with app.app_context():
     db.session.commit()
     print('\t>>> Tables deleted.')
 
-    print('\n\t>>> Generating sample data for recipes...')
-    recipes = create_recipes()
-    db.session.add_all(recipes)
-    db.session.commit()
-    print('\t>>> Recipe data generation successful.')
-
     print('\n\t>>> Generating sample data for users...')
     users = create_users()
     db.session.add_all(users)
     db.session.commit()
     print('\t>>> User data generation successful.')
+
+    print('\n\t>>> Generating sample data for recipes...')
+    recipes = create_recipes(users)
+    db.session.add_all(recipes)
+    db.session.commit()
+    print('\t>>> Recipe data generation successful.')
 
     print('\n\t>>> Generating sample data for favorites...')
     favorites = create_favorites(recipes, users)

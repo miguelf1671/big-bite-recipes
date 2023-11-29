@@ -52,5 +52,11 @@ def get_users():
     user_list = [user.to_dict() for user in all_users]
     return make_response(user_list), 200
 
+@app.get('/api/users/<int:user_id>')
+def get_users_submissions(user_id):
+    752
+    submitted_recipes = Recipe.query.filter(Recipe.who_submitted == user_id)
+
+
 if __name__ == '__main__':
     app.run()

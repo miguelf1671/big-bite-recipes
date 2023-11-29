@@ -14,7 +14,7 @@ class Recipe(db.Model, SerializerMixin):
     directions = db.Column(db.String, nullable=False)
     vegetarian = db.Column(db.Boolean, nullable=False)
     who_submitted = db.Column(db.String)
-    who_favorited = db.Column(db.String)
+    likes = db.Column(db.Integer, default=0)
 
     # Create a relationship between recipe and favorite
     favorites = db.relationship("Favorite", back_populates="recipe")
@@ -23,15 +23,13 @@ class Recipe(db.Model, SerializerMixin):
     users = association_proxy("favorites", "user")
 
     # Creates serialization rules to avoid cascading
-    serialize_rules = ("-favorites.recipe")
+    serialize_rules = ("-favorites.recipe",)
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable=False)
-    user_favorites = db.Column(db.String, nullable=False)
-    user_submissions = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
 
     # Create a relationship between user and favorite
     favorites = db.relationship("Favorite", back_populates="user")
@@ -40,7 +38,7 @@ class User(db.Model, SerializerMixin):
     recipes = association_proxy("favorites","recipe")
 
     # Create serialization rules to avoid cascading
-    serialize_rules = ("-favorites.user")
+    serialize_rules = ("-favorites.user",)
 
 
 class Favorite(db.Model, SerializerMixin):
