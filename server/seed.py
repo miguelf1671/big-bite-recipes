@@ -1,14 +1,18 @@
 from app import app
 from models import User, Recipe, Favorite, db
 from faker import Faker
-from random import choice
+from random import choice, randint
 
+seed_value = 123
 fake = Faker()
+Faker.seed(seed_value)
 
 
 # Create 10 fake recipes
 def create_recipes():
+
     recipes = []
+
     for _ in range(10):
         recipes.append(Recipe(
             name=fake.name(),
@@ -19,6 +23,10 @@ def create_recipes():
             who_submitted=fake.name(),
             who_favorited=fake.name()
         ))
+
+    
+
+
     return recipes
 
 # Creates 5 fake users
@@ -33,6 +41,20 @@ def create_users():
             user_submissions=fake.word(),
         ))
     return users
+
+
+def create_favorites(recipes, users):
+    list_of_favorites = []
+
+    for _ in range(len(recipes)):
+
+        list_of_favorites.append(Favorite(
+            recipe_id=recipes[randint(0, len(recipes) - 1)].id,
+            user_id=users[randint(0, len(users) - 1)].id
+        ))
+
+    return list_of_favorites
+
 
 #########################################################
 ### Populate table within application context manager ###
@@ -60,5 +82,11 @@ with app.app_context():
     db.session.add_all(users)
     db.session.commit()
     print('\t>>> User data generation successful.')
+
+    print('\n\t>>> Generating sample data for favorites...')
+    favorites = create_favorites(recipes, users)
+    db.session.add_all(favorites)
+    db.session.commit()
+    print('\t>>> Favorite data generation successful.')
 
     print('\n>>> Database populated successfully.')
