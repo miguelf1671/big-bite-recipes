@@ -1,0 +1,19 @@
+# Locked Dependencies
+Pipfile.lock
+*/Pipfile.lock
+
+# Ignore Environment Variables/Data
+.env
+*/.env
+.flaskenv
+*/.flaskenv
+
+# Cached Python Garbage
+__pycache__/
+*/__pycache__/
+
+# Flask-SQLAlchemy Subdirectories
+instance/
+*/instance/
+migrations/
+*/migrations/
