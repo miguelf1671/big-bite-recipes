@@ -9,8 +9,8 @@ flask-sqlalchemy = "*"
 sqlalchemy-serializer = "*"
 faker = "*"
 flask-migrate = "*"
+flask-cors = "*"
 bcrypt = "*"
-dotenv = "*"
 python-dotenv = "*"
 
 [dev-packages]
