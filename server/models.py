@@ -14,7 +14,7 @@ class Recipe(db.Model, SerializerMixin):
     ingredients = db.Column(db.String, nullable=False)
     directions = db.Column(db.String, nullable=False)
     vegetarian = db.Column(db.Boolean, nullable=False)
-    who_submitted = db.Column(db.String)
+    who_submitted = db.Column(db.Integer)
     likes = db.Column(db.Integer, default=0)
 
     # Create a relationship between recipe and favorite

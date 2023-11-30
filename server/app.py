@@ -3,8 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from models import User, Recipe, Favorite
 from config import app, db
-
-
+from middleware import authorization_required
 import bcrypt
 
 
@@ -12,9 +11,11 @@ import bcrypt
 def hope():
     return {'msg': 'I really hope this works!'}
 
+
 @app.get('/api')
-def api():
-    return {'msg': 'Getting a little closer to what you are looking for!'}
+@authorization_required
+def api(current_user):
+    return make_response({"user_id": current_user["id"], "msg" : "Access granted."})
 
 ##########################
 ### Routes for Recipes ###
@@ -35,8 +36,7 @@ def add_recipe():
         ingredients=POST_REQUEST['ingredients'],
         directions=POST_REQUEST['directions'],
         vegetarian=POST_REQUEST['vegetarian'],
-        who_submitted=POST_REQUEST['who_submitted'],
-        who_favorited=POST_REQUEST['who_favorited']
+        who_submitted=POST_REQUEST['who_submitted']
     )
     db.session.add(new_recipe)
     db.session.commit()
@@ -46,12 +46,34 @@ def add_recipe():
 ### Routes for Users ###
 ########################
 
-# @app.get('/api/users')
-# def get_users():
-#     all_users = User.query.all()
-#     user_list = [user.to_dict() for user in all_users]
-#     return make_response(user_list), 200
+@app.get("/api/users")
+def get_all_users():
+    all_users = User.query.all()
+    user_list = [user.to_dict() for user in all_users]
+    return make_response(user_list)
 
+
+@app.get('/api/submitted-recipes')
+@authorization_required
+def get_users_submitted_recipes(current_user):
+    all_recipes = Recipe.query.all()
+    submitted_recipes = [recipe.to_dict(only=("directions", "id", "image", "ingredients", "likes", "name", "vegetarian")) for recipe in all_recipes if recipe.who_submitted == current_user["id"]]
+    return make_response(jsonify(submitted_recipes)), 200
+
+@app.get('/api/favorited-recipes')
+@authorization_required
+def get_users_favorite_recipes(current_user):
+    some_bullshit = [recipe["recipe"] for recipe in current_user["favorites"]]
+    return make_response(some_bullshit)
+
+
+
+
+
+
+######################################
+### Routes for User log in and out ###
+######################################
 
 @app.post('/api/signup')
 def add_user():
@@ -89,7 +111,6 @@ def add_user():
             return make_response({"error": "Invalid username or password. Try again."}, 401)
     else:
         return make_response({"error": f"Invalid request type. (Expected POST; received {request.method}.)"}, 400)
-
 
 # POST route to authenticate user in database using session-stored credentials.
 @app.route("/login", methods=["POST"])
@@ -131,16 +152,6 @@ def user_logout():
         return make_response({"msg": "User successfully logged out."}, 204)
     else:
         return make_response({"error": f"Invalid request type. (Expected DELETE; received {request.method}.)"}, 400)
-
-
-
-
-
-@app.get('/api/users/<int:user_id>')
-def get_users_submissions(user_id):
-    752
-    submitted_recipes = Recipe.query.filter(Recipe.who_submitted == user_id)
-
 
 ######################
 ### Error Handling ###

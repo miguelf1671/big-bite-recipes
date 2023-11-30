@@ -12,10 +12,7 @@ import bcrypt
 
 # Create 10 fake recipes
 def create_recipes(users):
-    def encrypt_password(password):
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt=salt)
-        return hashed_password.decode("utf-8")
+    
 
     recipes = []
 
@@ -24,7 +21,7 @@ def create_recipes(users):
                           ingredients="Pork Chops, Croutons, Green Beans, Mashed Potatoes, Eggs",
                           directions="Cook it",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="Dijon Salmon",
@@ -32,7 +29,7 @@ def create_recipes(users):
                           ingredients="Salmon, Asparagus, Breadcrumbs, Rice Pilaf, Dijon Mustard",
                           directions="Cook it",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="Sliced Ribeye",
@@ -40,7 +37,7 @@ def create_recipes(users):
                           ingredients="Steak, Carrots, Arugula, Lemon, Texas Toast",
                           directions="Cook It",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="Spaghetti Squash",
@@ -48,7 +45,7 @@ def create_recipes(users):
                           ingredients="Spaghetti Squash, Cheddar Cheese, Tomatoes, Ground Beef, Frozen Pepper Stir-Fry Mix",
                           directions="Cook It",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="Easy Enchiladas",
@@ -56,7 +53,7 @@ def create_recipes(users):
                           ingredients="Ground Beef, Salsa con Queso, Salsa, Tortillas, Cheddar-Monterey Jack Cheese",
                           directions="Cook It",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="Tomato Feta Pasta",
@@ -64,7 +61,7 @@ def create_recipes(users):
                           ingredients="Cherry Tomatoes, Feta Cheese, Basil, Garlic, Pasta",
                           directions="Cook It!",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="Buffalo Chicken Lettuce Wraps",
@@ -72,7 +69,7 @@ def create_recipes(users):
                           ingredients="Chicken Breasts, Ranch Seasoning, Buffalo Hot Sauce, Lettuce, Blue Cheese",
                           directions="Cook It",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="BBQ Chicken Pizza",
@@ -80,7 +77,7 @@ def create_recipes(users):
                           ingredients="Pizza Dough, Rotisserie Chicken, Mozzerella Cheese, BBQ Sauce, Red Onion",
                           directions="Cook It",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="Chorizo Street Tacos",
@@ -88,7 +85,7 @@ def create_recipes(users):
                           ingredients="Chorizo, Corn Tortillas, Onion, Cilantro",
                           directions="Cook It",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     recipes.append(Recipe(name="Thai Coconut Pork Curry",
@@ -96,7 +93,7 @@ def create_recipes(users):
                           ingredients="Pork, Thai Coconut Curry Stir-Fry Sauce, Rice, Bell Pepper, Sugar Snap Peas",
                           directions="Cook It",
                           vegetarian=False,
-                          who_submitted=users[randint(0, len(users)-1)].username,
+                          who_submitted=users[randint(0, len(users)-1)].id,
                           likes=randint(0, len(users)-1)
                           ))
     
@@ -105,14 +102,18 @@ def create_recipes(users):
 # Creates 5 fake users
 
 def create_users():
+    def encrypt_password(password):
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt=salt)
+        return hashed_password.decode("utf-8")
     users = []
-    users.append(User(username="Tymur Bondar", password="tm123"))
-    users.append(User(username="Andrew Blumenthal", password="ab123"))
-    users.append(User(username="Jason Phillips", password="jp123"))
-    users.append(User(username="Dennis Shin", password="ds123"))
-    users.append(User(username="Sophie Gamer", password="sg123"))
-    users.append(User(username="Miguel Flores", password="mf123", is_admin=True))
-    users.append(User(username="Morgan Deason", password="md123", is_admin=True))
+    users.append(User(username="Tymur Bondar", password=encrypt_password("tm123")))
+    users.append(User(username="Andrew Blumenthal", password=encrypt_password("ab123")))
+    users.append(User(username="Jason Phillips", password=encrypt_password("jp123")))
+    users.append(User(username="Dennis Shin", password=encrypt_password("ds123")))
+    users.append(User(username="Sophie Gamer", password=encrypt_password("sg123")))
+    users.append(User(username="Miguel Flores", password=encrypt_password("mf123"), is_admin=True))
+    users.append(User(username="Morgan Deason", password=encrypt_password("md123"), is_admin=True))
     
     return users
 
