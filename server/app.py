@@ -8,13 +8,6 @@ from config import app, db
 import bcrypt
 
 
-
-# app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///app.db'
-# migrate = Migrate(app, db)
-# db.init_app(app)
-CORS(app)
-
 @app.get('/')
 def hope():
     return {'msg': 'I really hope this works!'}
