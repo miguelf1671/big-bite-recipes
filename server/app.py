@@ -1,5 +1,6 @@
 from flask import Flask, make_response, jsonify, request
 from flask_migrate import Migrate
+from flask_cors import CORS
 from models import User, Recipe, db
 
 
@@ -7,6 +8,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///app.db'
 migrate = Migrate(app, db)
 db.init_app(app)
+CORS(app)
 
 @app.get('/')
 def hope():
@@ -24,10 +26,10 @@ def api():
 def get_recipes():
     all_recipes = Recipe.query.all()
     recipe_list = [recipe.to_dict() for recipe in all_recipes]
-    return make_response(recipe_list), 200
+    return make_response(recipe_list, 200)
 
 @app.post('/api/recipes')
-def add_recipe():
+def add_recipe(): 
     POST_REQUEST = request.get_json()
     new_recipe = Recipe(
         name=POST_REQUEST['name'],
