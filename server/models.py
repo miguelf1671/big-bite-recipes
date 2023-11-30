@@ -1,8 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
+from config import db 
 
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 class Recipe(db.Model, SerializerMixin):
     __tablename__ ='recipes'
@@ -30,7 +31,12 @@ class User(db.Model, SerializerMixin):
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
 
+    def is_administrator(self):
+        return self.is_admin
     # Create a relationship between user and favorite
     favorites = db.relationship("Favorite", back_populates="user")
 

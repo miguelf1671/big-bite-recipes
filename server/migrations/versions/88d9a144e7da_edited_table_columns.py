@@ -1,8 +1,8 @@
-"""Adding Favorites Table v3
+"""Edited table columns
 
-Revision ID: 80a05b76aa9b
+Revision ID: 88d9a144e7da
 Revises: 
-Create Date: 2023-11-28 13:58:21.835406
+Create Date: 2023-11-30 11:21:48.731060
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '80a05b76aa9b'
+revision = '88d9a144e7da'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,22 +26,24 @@ def upgrade():
     sa.Column('directions', sa.String(), nullable=False),
     sa.Column('vegetarian', sa.Boolean(), nullable=False),
     sa.Column('who_submitted', sa.String(), nullable=True),
-    sa.Column('who_favorited', sa.String(), nullable=True),
+    sa.Column('likes', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(), nullable=False),
-    sa.Column('user_favorites', sa.String(), nullable=False),
-    sa.Column('user_submissions', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('password', sa.String(), nullable=False),
+    sa.Column('is_admin', sa.Boolean(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('username')
     )
     op.create_table('favorites',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('recipe_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], name=op.f('fk_favorites_recipe_id_recipes')),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_favorites_user_id_users')),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
