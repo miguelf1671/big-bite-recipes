@@ -27,8 +27,9 @@ def get_recipes():
     recipe_list = [recipe.to_dict() for recipe in all_recipes]
     return make_response(recipe_list, 200)
 
-@app.post('/api/recipes')
-def add_recipe(): 
+@app.route('/api/recipes', methods=["POST"])
+@authorization_required(methods="POST")
+def add_recipe(current_user): 
     POST_REQUEST = request.get_json()
     new_recipe = Recipe(
         name=POST_REQUEST['name'],
@@ -41,6 +42,33 @@ def add_recipe():
     db.session.add(new_recipe)
     db.session.commit()
     return make_response(jsonify(new_recipe.to_dict())), 201
+
+@app.patch("/api/recipes/<int:recipe_id>")
+@authorization_required
+def edit_recipe(current_user, recipe_id):
+    matching_recipe = Recipe.query.filter(Recipe.id == recipe_id).first()
+    if not matching_recipe:
+        return make_response({"error": f"Recipe ID '{recipe_id}' not found in database."})
+    
+    payload = request.get_json()
+
+    for attribute in payload:
+        setattr(matching_recipe, attribute, payload[attribute])
+
+    db.session.add(matching_recipe)
+    db.session.commit()
+    return make_response(matching_recipe.to_dict(only=("id", "name")), 200)
+
+@app.route("/api/recipes/<int:recipe_id>", methods=["DELETE"])
+@authorization_required(methods="DELETE")
+def remove_recipe(current_user, recipe_id):
+    matching_recipe = Recipe.query.filter(Recipe.id == recipe_id).first()
+    if not matching_recipe:
+        return make_response({"error": f"Recipe ID '{recipe_id}' not found in database."})
+    
+    db.session.delete(matching_recipe)
+    db.session.commit()
+    return make_response(matching_recipe.to_dict(only=("name",)), 204)
 
 ########################
 ### Routes for Users ###
@@ -63,8 +91,8 @@ def get_users_submitted_recipes(current_user):
 @app.get('/api/favorited-recipes')
 @authorization_required
 def get_users_favorite_recipes(current_user):
-    some_bullshit = [recipe["recipe"] for recipe in current_user["favorites"]]
-    return make_response(some_bullshit)
+    favorite_recipes = [recipe["recipe"] for recipe in current_user["favorites"]]
+    return make_response(favorite_recipes)
 
 
 
@@ -113,7 +141,7 @@ def add_user():
         return make_response({"error": f"Invalid request type. (Expected POST; received {request.method}.)"}, 400)
 
 # POST route to authenticate user in database using session-stored credentials.
-@app.route("/login", methods=["POST"])
+@app.route("/api/login", methods=["POST"])
 def user_login():
     if request.method == "POST":
         # Retrieve POST request as JSONified payload.
@@ -141,7 +169,7 @@ def user_login():
         return make_response({"error": f"Invalid request type. (Expected POST; received {request.method}.)"}, 400)
 
 # DELETE route to remove session-stored credentials for logged user.
-@app.route("/logout", methods=["DELETE"])
+@app.route("/api/logout", methods=["DELETE"])
 def user_logout():
     if request.method == "DELETE":
         # Clear user ID from server-persistent session storage.

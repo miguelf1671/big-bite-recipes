@@ -111,7 +111,9 @@ def create_users():
     users.append(User(username="Andrew Blumenthal", password=encrypt_password("ab123")))
     users.append(User(username="Jason Phillips", password=encrypt_password("jp123")))
     users.append(User(username="Dennis Shin", password=encrypt_password("ds123")))
+
     users.append(User(username="Sophie Gamer", password=encrypt_password("sg123")))
+    
     users.append(User(username="Miguel Flores", password=encrypt_password("mf123"), is_admin=True))
     users.append(User(username="Morgan Deason", password=encrypt_password("md123"), is_admin=True))
     
