@@ -19,7 +19,7 @@ function Nav() {
     setOpen((open) => !open);
   };
   let Links = [
-    { name: "HOME", link: "/home" },
+    { name: "HOME", link: "/" },
     { name: "COLLECTION", link: "/collection" },
     { name: "PROFILE", link: "/profile" },
   ];
@@ -70,7 +70,9 @@ function Nav() {
               </Link>
             </li>
           ))}
-          <Button>Log in</Button>
+          <a href="http://localhost:5174/signup">
+            <Button>Sign up</Button>
+          </a>
         </ul>
       </div>
     </div>
